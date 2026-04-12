@@ -1,4 +1,5 @@
 use num_complex::Complex;
+use std::collections::VecDeque;
 use std::f32::consts::PI;
 use std::sync::MutexGuard;
 const I: Complex<f32> = Complex { re: 0.0, im: 1.0 };
@@ -36,7 +37,7 @@ pub fn fft(input: &Vec<Complex<f32>>) -> Vec<Complex<f32>> {
 //     return out_complex;
 // }
 
-pub fn f32_to_complex_mutex(input: &MutexGuard<'_, Vec<f32>>) -> Vec<Complex<f32>> {
+pub fn f32_to_complex_mutex(input: &MutexGuard<'_, VecDeque<f32>>) -> Vec<Complex<f32>> {
     let mut out_complex: Vec<Complex<f32>> = vec![];
     for i in 0..input.len() {
         out_complex.push(Complex {
@@ -52,6 +53,14 @@ pub fn amp(x: Complex<f32>) -> f32 {
         return x.im.abs();
     }
     return x.re.abs();
+}
+
+pub fn complex_to_f32(input: &Vec<Complex<f32>>) -> Vec<f32> {
+    let mut res: Vec<f32> = Vec::new();
+    for i in 0..input.len() {
+        res.push(amp(input[i]));
+    }
+    return res;
 }
 
 // fn main() {

@@ -25,6 +25,13 @@ pub fn fft(input: &Vec<Complex<f32>>) -> Vec<Complex<f32>> {
     fft_inner(&mut buf_a, &mut buf_b, n, 1);
     buf_a
 }
+pub fn complex_to_f32(input: &Vec<Complex<f32>>) -> Vec<f32> {
+    let mut res: Vec<f32> = Vec::new();
+    for i in 0..input.len() {
+        res.push(amp(input[i]));
+    }
+    return res;
+}
 // pub fn f32_to_complex(input: &Vec<f32>) -> Vec<Complex<f32>> {
 //     let mut out_complex: Vec<Complex<f32>> = vec![];
 //     for i in 0..input.len() {
