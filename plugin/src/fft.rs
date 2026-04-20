@@ -1,6 +1,9 @@
 use num_complex::Complex;
+use std::collections::VecDeque;
 use std::f32::consts::PI;
 use std::sync::MutexGuard;
+
+use crate::music::Frames;
 const I: Complex<f32> = Complex { re: 0.0, im: 1.0 };
 
 pub fn fft(input: &Vec<Complex<f32>>) -> Vec<Complex<f32>> {
@@ -25,13 +28,6 @@ pub fn fft(input: &Vec<Complex<f32>>) -> Vec<Complex<f32>> {
     fft_inner(&mut buf_a, &mut buf_b, n, 1);
     buf_a
 }
-pub fn complex_to_f32(input: &Vec<Complex<f32>>) -> Vec<f32> {
-    let mut res: Vec<f32> = Vec::new();
-    for i in 0..input.len() {
-        res.push(amp(input[i]));
-    }
-    return res;
-}
 // pub fn f32_to_complex(input: &Vec<f32>) -> Vec<Complex<f32>> {
 //     let mut out_complex: Vec<Complex<f32>> = vec![];
 //     for i in 0..input.len() {
@@ -43,14 +39,19 @@ pub fn complex_to_f32(input: &Vec<Complex<f32>>) -> Vec<f32> {
 //     return out_complex;
 // }
 
-pub fn f32_to_complex_mutex(input: &MutexGuard<'_, Vec<f32>>) -> Vec<Complex<f32>> {
+pub fn f32_to_complex_mutex(input: &mut MutexGuard<'_, VecDeque<Frames>>) -> Vec<Complex<f32>> {
     let mut out_complex: Vec<Complex<f32>> = vec![];
+    if input.len() == 0 || input[0].frame.len() == 0 {
+        return out_complex;
+    }
+
     for i in 0..input.len() {
         out_complex.push(Complex {
-            re: input[i],
+            re: input[i].frame[0],
             im: 0.0,
         });
     }
+    // println!("{:?}", out_complex.len());
     return out_complex;
 }
 
@@ -59,6 +60,14 @@ pub fn amp(x: Complex<f32>) -> f32 {
         return x.im.abs();
     }
     return x.re.abs();
+}
+
+pub fn complex_to_f32(input: &Vec<Complex<f32>>) -> Vec<f32> {
+    let mut res: Vec<f32> = Vec::new();
+    for i in 0..input.len() {
+        res.push(amp(input[i]));
+    }
+    return res;
 }
 
 // fn main() {
